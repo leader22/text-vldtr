@@ -172,11 +172,11 @@
      * @param {Number} [rules.required.combineNum]
      *     必須とする組み合わせの数
      * @param {Boolean} [rules.acceptOrderANRepeat]
-     *     abcのような並びを許容するならtrue、デフォルトはfalse
+     *     abcのような並びを許容するならtrue、デフォルトはtrue
      * @param {Boolean} [rules.acceptSameANRepeat]
-     *     aaaのような並びを許容するならtrue、デフォルトはfalse
+     *     aaaのような並びを許容するならtrue、デフォルトはtrue
      * @param {Boolean} [rules.acceptSimpleWord]
-     *     passのような簡単な単語を許容するならtrue、デフォルトはfalse
+     *     passのような簡単な単語を許容するならtrue、デフォルトはtrue
      */
     var TextVldtr = function(rules) {
         rules = rules || {};
@@ -185,9 +185,9 @@
         this.maxLen              = rules.maxLen              || Infinity;
         this.forbidden           = rules.forbidden           || [];
         this.required            = rules.required            || { kind: [], combineNum: 0 };
-        this.acceptOrderANRepeat = rules.acceptOrderANRepeat || false;
-        this.acceptSameANRepeat  = rules.acceptSameANRepeat  || false;
-        this.acceptSimpleWord    = rules.acceptSimpleWord    || false;
+        this.acceptOrderANRepeat = rules.acceptOrderANRepeat || true;
+        this.acceptSameANRepeat  = rules.acceptSameANRepeat  || true;
+        this.acceptSimpleWord    = rules.acceptSimpleWord    || true;
 
         this._checkRules();
     };
@@ -520,11 +520,13 @@
     // エクスポート -------------------------------------------------------------------
     var __isAMD      = (typeof global.define === 'function') && global.define.amd;
     var __isCommonJS = (typeof global.exports === 'object') && global.exports;
+    var __isNode     = ('process' in global);
+
     if (__isAMD) {
         define([], function () {
             return TextVldtr;
         });
-    } else if (__isCommonJS) {
+    } else if (__isCommonJS || __isNode) {
         module.exports = TextVldtr;
     } else {
         global.TextVldtr = TextVldtr;
