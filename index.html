@@ -25,7 +25,7 @@ input {
 <body>
 <h1>TextVldtr Sample</h1>
 <h2>バリデートする文字列</h2>
-<input type="text" value="hogehoge" id="js-input">
+<input type="text" value="hoge" id="js-input">
 文字列を変更すると、バリデート結果が変わります。
 
 <h2>バリデート結果</h2>
@@ -55,9 +55,9 @@ input {
 (function(global) {
 'use strict';
 
-var $ = document.querySelector.bind(document);
-var $input   = $('#js-input');
-var $msg     = $('#js-msg');
+var $ = function(id) { return document.getElementById(id); };
+var $input = $('js-input');
+var $msg   = $('js-msg');
 
 var textVldtr = new TextVldtr({
     minLen: 6,
