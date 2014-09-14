@@ -1,6 +1,8 @@
 text-vldtr
 ==========
 
+See this [demo](http://labs.lealog.net/text-vldtr/)!
+
 ## Overview
 IDやパスワードなど、その文字列がある一定のルールを満たしているかをチェックする仕組みです。
 
