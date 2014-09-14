@@ -328,6 +328,14 @@
     function _getComplexityScore(txt) {
         var ret = {},
             score = 1, rank = 1;
+        if (!txt || txt.length === 0) {
+            ret = {
+                score: score,
+                rank:  rank
+            };
+
+            return ret;
+        }
 
         // まず文字数でベースのスコアをつける
         score += (txt.length/3)|0;
@@ -362,6 +370,8 @@
             score: score,
             rank:  rank
         };
+
+        return ret;
     }
 
     /**
