@@ -1,8 +1,6 @@
 text-vldtr
 ==========
 
-Validate your input text!
-
 ## Overview
 IDやパスワードなど、その文字列がある一定のルールを満たしているかをチェックする仕組みです。
 
@@ -44,8 +42,8 @@ var textVldtr = new TextVldtr(rules);
 var res1 = textVldtr.validateText('mySecret24');
 var res2 = textVldtr.validateText('myPasswrd2');
 
-res1.code && console.log('INVALID'); // => code === 0 => valid text
-res2.code && console.log('INVALID'); // => cpde !== 0 => invalid text
+res1.code && console.log('INVALID'); // => code === 0 =>   valid text: do nothing
+res2.code && console.log('INVALID'); // => cpde !== 0 => invalid text: log "INVALID"
 ```
 
 ## Rules
@@ -119,16 +117,45 @@ p@ss
 ## Methods
 
 ### validateText
-#### Return
+文字列を渡すと、バリデート結果のオブジェクトを返します。
+
+#### バリデート結果オブジェクト
+以下のキーを持つオブジェクトです。
+
+```javascript
+var res = {
+    code:    0,                     // 結果の識別コード(数値)
+    codeStr: 'VALID',               // 結果の識別コード(文字列)
+    detail:  'Input text is valid.' // 結果の詳細説明
+}
+```
+
+詳細はコード参照。
 
 ### validateEmailMayBe
-#### Return
+文字列を渡すと、バリデート結果のオブジェクトを返します。
+
+> 厳密にメールアドレスかどうかの判定は行っていません。
+> だからMayBeです。
+> 空メールを送らせるのが一番確実だと思います・・。
 
 ### getAvailableKinds
-#### Return
+上述の使用可能な文字タイプが確認できます。
 
 ### getComplexityScore
-#### Return
+与えられた文字列の複雑性をスコアにして返します。
+
+```javascript
+var textVldtr = new TextVldtr();
+textVldtr.getComplexityScore('leader22');  // => { score:  9, rank: 2 }
+textVldtr.getComplexityScore('#Leader22'); // => { score: 16, rank: 5 }
+```
+
+- score: 1-N
+- rank:  1-5
+
+> 何度も書きますが、この機能はロジックが適当です！
+
 
 ## License
 MIT
