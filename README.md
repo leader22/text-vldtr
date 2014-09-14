@@ -39,11 +39,28 @@ var rules = {
 };
 var textVldtr = new TextVldtr(rules);
 
-var res1 = textVldtr.validateText('mySecret24');
-var res2 = textVldtr.validateText('myPasswrd2');
 
-res1.code && console.log('INVALID'); // => code === 0 =>   valid text: do nothing
-res2.code && console.log('INVALID'); // => cpde !== 0 => invalid text: log "INVALID"
+/**
+ * 以下のオブジェクトが返る
+ *
+ * {
+ *     code:    0,
+ *     codeStr: 'VALID',
+ *     detail:  'Input text is valid.'
+ * }
+ */
+textVldtr.validateText('mySecret24');
+
+/**
+ * 以下のオブジェクトが返る
+ *
+ * {
+ *     code:    7,
+ *     codeStr: 'HAS_SIMPLE_WORD',
+ *     detail:  'Input text has some simple word.'
+ * }
+ */
+textVldtr.validateText('myPasswrd2');
 ```
 
 ## Rules
