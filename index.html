@@ -5,30 +5,44 @@
   <title></title>
 </head>
 <body>
-    <script src="./src/text-vldtr.js"></script>
-    <script>
-        var setting = {
-            minLen: 1,
-            maxLen: 3
-        };
-        var t = new TextVldtr(setting);
+<input type="text" value="sample123" id="js-input">
+<textarea id="js-setting" cols="30" rows="10">
+{
+    minLen: 2,
+    maxLen: 5
+}
+</textarea>
+<pre id="js-error"></pre>
+<script src="./src/text-vldtr.js"></script>
+<script>
+(function(global) {
+'use strict';
 
-        chk(t.validateText('1'));
-        chk(t.validateText('12'));
-        chk(t.validateText('123'));
-        chk(t.validateText('1234'));
-        chk(t.validateText(''));
+var $ = document.querySelector.bind(document);
+
+var $input   = $('#js-input');
+var $setting = $('#js-setting');
+var $err     = $('#js-error');
+
+    var setting = {};
+    setting = {
+        acceptSameANRepeat: 1
+    };
+    var t1 = new TextVldtr(setting);
+    console.log('Rule:', setting);
+
+    [
+        // 結果コードを期待するテキスト
+        { code: 0, text: 'aa',      msg: 'ok' },
+        { code: 0, text: 'a',      msg: 'ok' },
+        { code: 5, text: '@@@@',     msg: '逆でもng' },
+    ].forEach(function(c) {
+        console.log(t1.validateText(c.text).code, c.code, (c.msg || undefined));
+    });
 
 
 
-        function chk(res) {
-            if (res.code) {
-                console.warn(res);
-            }
-            else {
-                console.log(res);
-            }
-        }
-    </script>
+}(this.self || global));
+</script>
 </body>
 </html>
