@@ -273,7 +273,7 @@ test('Email test', function(t) {
 var test = require('tape');
 var TextVldtr = require('./../src/text-vldtr');
 
-test('Email test', function(t) {
+test('Free sample test', function(t) {
     var setting = {};
     setting = {
         minLen: 6,

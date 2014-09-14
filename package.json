@@ -1,6 +1,6 @@
 {
   "name": "text-vldtr",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Validate your input text!",
   "main": "dist/text-vldtr.min.js",
   "directories": {
@@ -16,7 +16,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": ""
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
