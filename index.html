@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+    <script src="./src/text-vldtr.js"></script>
+    <script>
+        var setting = {
+            minLen: 1,
+            maxLen: 3
+        };
+        var t = new TextVldtr(setting);
+
+        chk(t.validateText('1'));
+        chk(t.validateText('12'));
+        chk(t.validateText('123'));
+        chk(t.validateText('1234'));
+        chk(t.validateText(''));
+
+
+
+        function chk(res) {
+            if (res.code) {
+                console.warn(res);
+            }
+            else {
+                console.log(res);
+            }
+        }
+    </script>
+</body>
+</html>
