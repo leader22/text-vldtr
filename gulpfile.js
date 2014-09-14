@@ -1,9 +1,10 @@
 'use strict';
 
-
+var exec   = require('child_process').exec;
 var gulp   = require('gulp');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+var concat = require('gulp-concat');
 var header = require('gulp-header');
 var pkg    = require('./package.json');
 
@@ -20,11 +21,20 @@ gulp.task('dist', function() {
         }))
         .pipe(header(BANNER, pkg))
         .pipe(rename({ extname: '.min.js' }))
-        .pipe(gulp.dest('dist/'))
+        .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('test', function() {
-    console.log('no test available');
+// 個別のテストファイルを1つにまとめる
+gulp.task('make_test', function() {
+    gulp.src('test/fixtures/*.js')
+        .pipe(concat('test.js'))
+        .pipe(gulp.dest('test/'));
 });
 
-gulp.task('default', ['dist']);
+gulp.task('test', ['make_test'], function() {
+    exec('node test/test.js', function(err, stdout, stderr) {
+        console.log(stdout);
+    });
+});
+
+gulp.task('default', ['test', 'dist']);
