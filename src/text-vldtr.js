@@ -185,9 +185,9 @@
         this.maxLen              = rules.maxLen              || Infinity;
         this.forbidden           = rules.forbidden           || [];
         this.required            = rules.required            || { kind: [], combineNum: 0 };
-        this.acceptOrderANRepeat = rules.acceptOrderANRepeat || true;
-        this.acceptSameANRepeat  = rules.acceptSameANRepeat  || true;
-        this.acceptSimpleWord    = rules.acceptSimpleWord    || true;
+        this.acceptOrderANRepeat = rules.acceptOrderANRepeat !== false ? true : false;
+        this.acceptSameANRepeat  = rules.acceptSameANRepeat  !== false ? true : false;
+        this.acceptSimpleWord    = rules.acceptSimpleWord    !== false ? true : false;
 
         this._checkRules();
     };
