@@ -6,6 +6,15 @@ test('Base test', function(t) {
         t2 = new TextVldtr();
     t.notEqual(t1, t2, '別インスタンスが返る');
 
+    setting = {
+        required: {
+            combineNum: 1,
+            kind: ['NUMBER', 'UC_ALPHABET']
+        },
+        useStrictMode: true
+    };
+    t.doesNotThrow(function() { new TextVldtr(setting) }, 'ルールok')
+
     var setting = {
         minLen: 4,
         maxLen: 3
@@ -25,7 +34,6 @@ test('Base test', function(t) {
     };
     t.throws(function() { new TextVldtr(setting) }, 'ルールがng')
 
-
     setting = {
         required: {
             combineNum: 3,
@@ -42,6 +50,20 @@ test('Base test', function(t) {
     };
     t.throws(function() { new TextVldtr(setting) }, 'ルールがng')
 
+    setting = {
+        forbidden: ['SYMBOL'],
+        useStrictMode: true
+    };
+    t.throws(function() { new TextVldtr(setting) }, 'ルールがng')
+
+    setting = {
+        forbidden: ['SYMBOL'],
+        required: {
+            kind: ['NUMBER']
+        },
+        useStrictMode: true
+    };
+    t.throws(function() { new TextVldtr(setting) }, 'ルールがng')
 
     t.end();
 });

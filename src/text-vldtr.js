@@ -50,6 +50,11 @@
             codeStr: 'HAS_SIMPLE_WORD',
             detail:  'Input text has some simple word.'
         },
+        NOT_REQUIRED_CHARACTER: {
+            code:    8,
+            codeStr: 'NOT_REQUIRED_CHARACTER',
+            detail:  'Input text has some character does not required.'
+        },
         MAY_NOT_BE_EMAIL: {
             code:    11,
             codeStr: 'MAY_NOT_BE_EMAIL',
@@ -60,7 +65,7 @@
         LC_ALPHABET_RE      = /[a-z]/,
         NUMBER_RE           = /[0-9]/,
         JAPANESE_RE         = /[亜-熙ぁ-んァ-ヶ]/,
-        SYMBOL_RE           = /[\[\]!@#\$%^&\*?_,~\"\$\'\(\)=\|\-\;\:\.\/\`\{\}\+\>\\ ]/,
+        SYMBOL_RE           = /[\[\]!@#\$%^&\*?_,~\"\$\'\(\)=\|\-\;\:\.\/\`\{\}\+\>\\]/,
         SAME_AN_REPEATED_RE = /([a-zA-Z0-9])\1\1/, // さすがに2文字続くのはある(ex. google, yahoo)
         SIMPLEST_EMAIL_RE   = /.+@.+\..+/;
     var ORDER_REPEEATED_CHARS_LIST = [
@@ -73,6 +78,13 @@
         'pass',
         'p@ss',
     ];
+    var REGEXP_STR = {
+        UC_ALPHABET: UC_ALPHABET_RE.source,
+        LC_ALPHABET: LC_ALPHABET_RE.source,
+        NUMBER:      NUMBER_RE.source,
+        JAPANESE:    JAPANESE_RE.source,
+        SYMBOL:      SYMBOL_RE.source
+    };
     var CHECK_FUNC = {
         // 日本語が入ってるかチェック
         JAPANESE: function(txt) {
@@ -177,6 +189,8 @@
      *     aaaのような並びを許容するならtrue、デフォルトはtrue
      * @param {Boolean} [rules.acceptSimpleWord]
      *     passのような簡単な単語を許容するならtrue、デフォルトはtrue
+     * @param {Boolean} [rules.useStrictMode]
+     *     requiredに設定された内容以外認めないようにするならtrue、デフォルトはfalse
      */
     var TextVldtr = function(rules) {
         rules = rules || {};
@@ -185,9 +199,10 @@
         this.maxLen              = rules.maxLen              || Infinity;
         this.forbidden           = rules.forbidden           || [];
         this.required            = rules.required            || { kind: [], combineNum: 0 };
-        this.acceptOrderANRepeat = rules.acceptOrderANRepeat !== false ? true : false;
-        this.acceptSameANRepeat  = rules.acceptSameANRepeat  !== false ? true : false;
-        this.acceptSimpleWord    = rules.acceptSimpleWord    !== false ? true : false;
+        this.acceptOrderANRepeat = rules.acceptOrderANRepeat !== false ? true  : false;
+        this.acceptSameANRepeat  = rules.acceptSameANRepeat  !== false ? true  : false;
+        this.acceptSimpleWord    = rules.acceptSimpleWord    !== false ? true  : false;
+        this.useStrictMode       = rules.useStrictMode       !== true  ? false : true;
 
         this._checkRules();
     };
@@ -202,6 +217,7 @@
         _checkRules:           _checkRules,
         _isEmpty:              _isEmpty,
         _isInvalidLen:         _isInvalidLen,
+        _hasNotRequired:       _hasNotRequired,
         _isInvalidCombination: _isInvalidCombination,
         _hasForbiddenChar:     _hasForbiddenChar,
         _hasSameANRepeated:    _hasSameANRepeated,
@@ -256,6 +272,14 @@
                 }
             }
         }
+
+        if (this.useStrictMode && this.required.kind.length === 0) {
+            throw new Error('Required charcters kind is not defined but you use strict mode.');
+        }
+
+        if (this.useStrictMode && this.forbidden.length) {
+            throw new Error('Do not need forbidden charcters when you use strict mode.');
+        }
     }
 
     /**
@@ -273,6 +297,7 @@
     function _validateText(txt) {
         if (this._isEmpty(txt))              { return VALIDATION_RESULTS.IS_EMPTY; }
         if (this._isInvalidLen(txt))         { return VALIDATION_RESULTS.INVALID_LENGTH; }
+        if (this._hasNotRequired(txt))       { return VALIDATION_RESULTS.NOT_REQUIRED_CHARACTER; }
         if (this._hasForbiddenChar(txt))     { return VALIDATION_RESULTS.FORBIDDEN_CHARACTER; }
         if (this._isInvalidCombination(txt)) { return VALIDATION_RESULTS.INVALID_COMBINATION; }
         if (this._hasSameANRepeated(txt))    { return VALIDATION_RESULTS.HAS_SAME_AN_REPEATED; }
@@ -410,6 +435,45 @@
             txt.length > this.maxLen) { return true; }
 
         return false;
+    }
+
+    /**
+     * Strictモードだと、使っていい文字しか使えないのでそれをチェックする
+     *
+     * @member TextVldtr
+     * @method hasNotRequired
+     * @param {String} txt
+     *     チェックする文字列
+     * @return {Boolean}
+     *     チェック結果
+     */
+    function _hasNotRequired(txt) {
+        // 許容するなら無視
+        if (!this.useStrictMode) { return false; }
+
+        // 文字数
+        var len = txt.length;
+        var required = this.required.kind;
+        var i = 0, l = required.length,
+            kind, checker, res;
+        for (; i < l; i++) {
+            kind = required[i];
+            checker = new RegExp(REGEXP_STR[kind], 'g');
+
+            // 該当する文字の分だけ文字数から引く
+            res = txt.match(checker);
+            if (res) {
+                len -= txt.match(checker).length;
+            }
+        }
+
+        // 残ってたら使っちゃダメなの使ってる
+        if (len) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

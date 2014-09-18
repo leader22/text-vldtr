@@ -133,6 +133,12 @@ pass
 p@ss
 ```
 
+### useStrictMode {Boolean}
+デフォルトでは``false``
+
+``required.kind``で指定した文字タイプ以外の使用を禁止します。
+
+
 ## Methods
 
 ### validateText
