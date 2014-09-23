@@ -489,17 +489,13 @@
             // 該当する文字の分だけ文字数から引いて
             res = txt.match(checker);
             if (res) {
-                len -= txt.match(checker).length;
+                len -= res.length;
             }
         }
 
         // 残ってたら使っちゃダメなの使ってる
-        if (len) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        if (len) { return true; }
+        return false;
     }
 
     /**
