@@ -9,6 +9,7 @@
         'LC_ALPHABET', // 英字(小文字)
         'UC_ALPHABET'  // 英字(大文字)
     ];
+
     var VALIDATION_RESULTS = {
         VALID: {
             code:    0,
@@ -61,6 +62,7 @@
             detail:  'Input text may not be an email address.'
         }
     };
+
     var UC_ALPHABET_RE      = /[A-Z]/,
         LC_ALPHABET_RE      = /[a-z]/,
         NUMBER_RE           = /[0-9]/,
@@ -68,16 +70,19 @@
         SYMBOL_RE           = /[\[\]!@#\$%^&\*?_,~\"\$\'\(\)=\|\-\;\:\.\/\`\{\}\+\>\\]/,
         SAME_AN_REPEATED_RE = /([a-zA-Z0-9])\1\1/, // さすがに2文字続くのはある(ex. google, yahoo)
         SIMPLEST_EMAIL_RE   = /[^+]+@.+\..+/;
+
     var ORDER_REPEEATED_CHARS_LIST = [
         'abcdefghijklmnopqrstuvwxyzabc',
         'zyxwvutsrqponmlkjihgfedcbazyx',
         '1234567890123',
         '0987654321098'
     ];
-    var SIMPLE_WORD_LIST = [
-        'pass',
-        'p@ss',
+
+    var SIMPLE_WORD_RE_LIST = [
+        /p[a@]ss/i,
+        /qwerty/i
     ];
+
     var REGEXP_STR = {
         UC_ALPHABET: UC_ALPHABET_RE.source,
         LC_ALPHABET: LC_ALPHABET_RE.source,
@@ -85,6 +90,7 @@
         JAPANESE:    JAPANESE_RE.source,
         SYMBOL:      SYMBOL_RE.source
     };
+
     var CHECK_FUNC = {
         // 日本語が入ってるかチェック
         JAPANESE: function(txt) {
@@ -135,10 +141,10 @@
         },
         // 安易に想像できる文字が入ってないかチェック
         HAS_SIMPLE_WORD: function(txt) {
-            var i = 0, l = SIMPLE_WORD_LIST.length,
+            var i = 0, l = SIMPLE_WORD_RE_LIST.length,
                 checkRe;
             for (; i < l; i++) {
-                checkRe = new RegExp(SIMPLE_WORD_LIST[i], 'i');
+                checkRe = SIMPLE_WORD_RE_LIST[i];
                 if (checkRe.test(txt)) {
                     return true;
                 }
@@ -204,7 +210,10 @@
         this.acceptSimpleWord    = rules.acceptSimpleWord    !== false ? true  : false;
         this.useStrictMode       = rules.useStrictMode       !== true  ? false : true;
 
+        this._strictModeRegExpArr = [];
+
         this._checkRules();
+        this.useStrictMode && this._getStrictModeRegExp();
     };
 
     TextVldtr.prototype = {
@@ -215,6 +224,7 @@
         getComplexityScore:    _getComplexityScore,
 
         _checkRules:           _checkRules,
+        _getStrictModeRegExp:  _getStrictModeRegExp,
         _isEmpty:              _isEmpty,
         _isInvalidLen:         _isInvalidLen,
         _hasNotRequired:       _hasNotRequired,
@@ -279,6 +289,25 @@
 
         if (this.useStrictMode && this.forbidden.length) {
             throw new Error('Do not need forbidden charcters when you use strict mode.');
+        }
+    }
+
+    /**
+     * Strictモードで、予め生成できる正規表現を作っておく
+     *
+     * メソッドコールの度に正規表現オブジェクト作るのつらそうなので
+     * 先に用意できるやつは、用意しておく
+     *
+     * @member TextVldtr
+     * @method getStrictModeRegExp
+     */
+    function _getStrictModeRegExp() {
+        var required = this.required.kind;
+        var i = 0, l = required.length,
+            kind;
+        for (; i < l; i++) {
+            kind = required[i];
+            this._strictModeRegExpArr.push(new RegExp(REGEXP_STR[kind], 'g'));
         }
     }
 
@@ -451,29 +480,22 @@
         // 許容するなら無視
         if (!this.useStrictMode) { return false; }
 
-        // 文字数
+        // 文字数のうち
         var len = txt.length;
-        var required = this.required.kind;
-        var i = 0, l = required.length,
-            kind, checker, res;
+        var i = 0, l = this._strictModeRegExpArr.length,
+            checker, res;
         for (; i < l; i++) {
-            kind = required[i];
-            checker = new RegExp(REGEXP_STR[kind], 'g');
-
-            // 該当する文字の分だけ文字数から引く
+            checker = this._strictModeRegExpArr[i];
+            // 該当する文字の分だけ文字数から引いて
             res = txt.match(checker);
             if (res) {
-                len -= txt.match(checker).length;
+                len -= res.length;
             }
         }
 
         // 残ってたら使っちゃダメなの使ってる
-        if (len) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        if (len) { return true; }
+        return false;
     }
 
     /**
