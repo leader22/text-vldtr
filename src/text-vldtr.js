@@ -67,7 +67,7 @@
         JAPANESE_RE         = /[亜-熙ぁ-んァ-ヶ]/,
         SYMBOL_RE           = /[\[\]!@#\$%^&\*?_,~\"\$\'\(\)=\|\-\;\:\.\/\`\{\}\+\>\\]/,
         SAME_AN_REPEATED_RE = /([a-zA-Z0-9])\1\1/, // さすがに2文字続くのはある(ex. google, yahoo)
-        SIMPLEST_EMAIL_RE   = /.+@.+\..+/;
+        SIMPLEST_EMAIL_RE   = /[^+]+@.+\..+/;
     var ORDER_REPEEATED_CHARS_LIST = [
         'abcdefghijklmnopqrstuvwxyzabc',
         'zyxwvutsrqponmlkjihgfedcbazyx',
