@@ -1,12 +1,12 @@
 'use strict';
 
-var exec   = require('child_process').exec;
-var gulp   = require('gulp');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var header = require('gulp-header');
-var pkg    = require('./package.json');
+var gulp    = require('gulp');
+var uglify  = require('gulp-uglify');
+var rename  = require('gulp-rename');
+var header  = require('gulp-header');
+var espower = require('gulp-espower');
+var mocha   = require('gulp-mocha');
+var pkg     = require('./package.json');
 
 var BANNER = '/*! <%= name %> / @version:<%= version %> @author:<%= author %> @license:<%= license %> */ \n';
 
@@ -24,17 +24,10 @@ gulp.task('dist', function() {
         .pipe(gulp.dest('dist/'));
 });
 
-// 個別のテストファイルを1つにまとめる
-gulp.task('make_test', function() {
-    gulp.src('test/fixtures/*.js')
-        .pipe(concat('test.js'))
-        .pipe(gulp.dest('test/'));
-});
-
-gulp.task('test', ['make_test'], function() {
-    exec('node test/test.js', function(err, stdout, stderr) {
-        console.log(stdout);
-    });
+gulp.task('test', function () {
+    gulp.src(['test/*.js'])
+        .pipe(espower())
+        .pipe(mocha());
 });
 
 gulp.task('default', ['test', 'dist']);

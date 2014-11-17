@@ -1,7 +1,8 @@
-var test = require('tape');
+'use strict';
+var assert = require('power-assert');
 var TextVldtr = require('./../src/text-vldtr');
 
-test('Free sample test', function(t) {
+describe('Monkey test', function() {
     var setting = {};
     setting = {
         minLen: 6,
@@ -16,7 +17,6 @@ test('Free sample test', function(t) {
         acceptSimpleWord:    false
     };
     var t1 = new TextVldtr(setting);
-    console.log('Rule:', setting);
 
     [
         // 結果コードを期待するテキスト
@@ -30,8 +30,9 @@ test('Free sample test', function(t) {
         { code: 6, text: 'tsrcHoo136',  msg: 'ng' },
         { code: 7, text: 'myPAsswrd2',  msg: 'ng' }
     ].forEach(function(c) {
-        t.equal(t1.validateText(c.text).code, c.code, (c.msg || undefined));
+        it(c.msg, function() {
+            assert.equal(t1.validateText(c.text).code, c.code);
+        });
     });
 
-    t.end();
 });
