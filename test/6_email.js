@@ -1,12 +1,12 @@
-var test = require('tape');
+'use strict';
+var assert = require('power-assert');
 var TextVldtr = require('./../src/text-vldtr');
 
-test('Email test', function(t) {
+describe('Email test', function() {
     var setting = {};
     setting = {
     };
     var t1 = new TextVldtr(setting);
-    console.log('Rule:', setting);
 
     [
         // 結果コードを期待するテキスト
@@ -21,8 +21,9 @@ test('Email test', function(t) {
         { code:11, text: 'foooooooooooo@.', msg: 'ng' },
         { code:11, text: 'foooooooooooooo', msg: 'ng' }
     ].forEach(function(c) {
-        t.equal(t1.validateEmailMayBe(c.text).code, c.code, (c.msg || undefined));
+        it(c.msg, function() {
+            assert.equal(t1.validateEmailMayBe(c.text).code, c.code);
+        });
     });
 
-    t.end();
 });
