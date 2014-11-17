@@ -1,1 +1,1 @@
-module.exports = require('dist/text-vldtr.min.js');
+module.exports = require('./dist/text-vldtr.min.js');
