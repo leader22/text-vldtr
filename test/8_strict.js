@@ -13,7 +13,6 @@ describe('Strict mode test', function() {
             }
         };
         var t1 = new TextVldtr(setting);
-        console.log('Rule:', setting);
 
         [
             // 結果コードを期待するテキスト
