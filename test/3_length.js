@@ -1,6 +1,6 @@
 'use strict';
 var assert = require('power-assert');
-var TextVldtr = require('./../src/text-vldtr');
+var TextVldtr = require('./../../src/text-vldtr');
 
 describe('Length test', function() {
     var setting = {};

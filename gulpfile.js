@@ -24,10 +24,23 @@ gulp.task('dist', function() {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('test', function () {
+gulp.task('test:make', function () {
     gulp.src(['test/*.js'])
         .pipe(espower())
+        .pipe(gulp.dest('test/espowered'));
+});
+gulp.task('test:exec', function () {
+    gulp.src(['test/espowered/*.js'])
         .pipe(mocha());
 });
 
-gulp.task('default', ['test', 'dist']);
+
+gulp.task('default', function() {
+    console.log();
+    console.log('Available tasks:');
+    console.log();
+    console.log('  gulp dist');
+    console.log('  gulp test:make');
+    console.log('  gulp test:exec');
+    console.log();
+});
