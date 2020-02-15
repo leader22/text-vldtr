@@ -1,7 +1,7 @@
 text-vldtr
 ==========
 
-See this [demo](http://labs.lealog.net/text-vldtr/)!
+See https://leader22.github.io/text-vldtr/
 
 ### Now available on npm!
 ```
